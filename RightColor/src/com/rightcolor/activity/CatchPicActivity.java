@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -35,7 +36,7 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class CatchPicture extends Activity {
+public class CatchPicActivity extends Activity {
 
 	private static final String TAG = "CameraActivity";
 	
@@ -97,9 +98,13 @@ public class CatchPicture extends Activity {
 	/**
 	 * 生成照片保存路径
 	 */
-	public String mSavePath;
+	private String mSavePath;
 	
+	/**
+	 * 转换进度
+	 */
 	private ProgressBar mProgress;
+	
 	
 
 	@Override
@@ -135,8 +140,7 @@ public class CatchPicture extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO 自动生成的方法存根
-				mSimType = Simulation.deutan;
-				mCamera.takePicture(new TakePicture());
+				catchPic(Simulation.deutan);
 			}
 		});
 		mSimButton.setProtanOnClickListener(new OnClickListener() {//设置点击效果
@@ -144,8 +148,7 @@ public class CatchPicture extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO 自动生成的方法存根
-				mSimType = Simulation.protan;
-				mCamera.takePicture(new TakePicture());
+				catchPic(Simulation.protan);
 			}
 		});
 		mSimButton.setTritanOnClickListener(new OnClickListener() {//设置点击效果
@@ -153,8 +156,7 @@ public class CatchPicture extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO 自动生成的方法存根
-				mSimType = Simulation.tritan;
-				mCamera.takePicture(new TakePicture());
+				catchPic(Simulation.tritan);
 			}
 		});
 		mSimBar.addView(mSimButton);
@@ -189,7 +191,6 @@ public class CatchPicture extends Activity {
 	protected void onResume() {
 		// TODO 自动生成的方法存根
 		Log.d(TAG,"onResume");
-		//openCamera(mHolder);
 		super.onResume();
 	}
 
@@ -197,7 +198,6 @@ public class CatchPicture extends Activity {
 	protected void onPause() {
 		// TODO 自动生成的方法存根
 		Log.d(TAG,"onPause");
-		//releaseCamera();
 		super.onPause();
 	}
 	
@@ -263,10 +263,48 @@ public class CatchPicture extends Activity {
 		  
 		Intent intent = new Intent();
 		intent.putExtras(bundle);
-		intent.setClass(CatchPicture.this, SimImageActivity.class);
+		intent.setClass(CatchPicActivity.this, SimImageActivity.class);
 		startActivity(intent);
+		mProgress.setVisibility(View.GONE);
 	}
 	
+	/**
+	 * 抓取照片函数
+	 */
+	private void catchPic(Simulation mode) {
+		mProgress.setVisibility(View.VISIBLE);
+		mSimBar.setVisibility(View.GONE);
+		mSimType = mode;
+		Runnable catchPic = new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO 自动生成的方法存根
+				mCamera.takePicture(new TakePicture());
+			}
+			
+		};
+		new Thread(catchPic).start();
+	}
+	
+	/**
+	 * 抓取照片线程实现
+	 */
+	private final class CatchPicture  implements Runnable {
+
+		@Override
+		public void run() {
+			// TODO 自动生成的方法存根
+			mCamera.takePicture(new TakePicture());
+		}
+		
+	}
+	
+	/**
+	 * 相机预览surfaceview 建立和销毁时的callback
+	 * @author Administrator
+	 *
+	 */
 	private final class SurfaceViewCallback implements Callback {
 
 		@Override
@@ -306,7 +344,6 @@ public class CatchPicture extends Activity {
 	        mPressPic = null;
 	        mRawPic = null;
 	        
-			mProgress.setVisibility(View.VISIBLE);
 			mRawPic = BitmapFactory.decodeByteArray(data, 0, data.length);
 
 	        mCamera.stopPreview();
@@ -316,11 +353,9 @@ public class CatchPicture extends Activity {
 			getWindowManager().getDefaultDisplay().getMetrics(metric);
 	        mPressPic = UtilCommon.zoomImage(mRawPic, metric.widthPixels, metric.heightPixels);
 	        
-	        //UtilCommon.saveBitmap(mRawPic, mSavePath);
 	        UtilCommon.saveBitmap(mPressPic, mSavePath);
        
 			turnToImage();
-			mProgress.setVisibility(View.GONE);
 		}
 		
 	}

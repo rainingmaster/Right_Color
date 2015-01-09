@@ -6,10 +6,21 @@
     <ImageView
         android:id="@+id/showView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:background="#666"
+        android:scaleType="fitXY" />
+    
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_pic"
+        android:layout_alignParentBottom="true"
+        android:background="#666"
+        android:textColor="#999"/>
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progressSim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
