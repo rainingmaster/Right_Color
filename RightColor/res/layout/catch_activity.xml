@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CatchPicture" >
+
+    <ProgressBar
+        android:id="@+id/progressCatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+    <SurfaceView 
+        android:id="@+id/cl_camera_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+    
+    <LinearLayout
+        android:id="@+id/cl_focus_bar"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:paddingTop="60dip"
+        android:paddingBottom="60dip" >
+        
+        <com.rightcolor.widget.VerticalSeekBar 
+	        android:id="@+id/simSeekBar"    
+	        android:layout_width="wrap_content"
+	        android:layout_height="fill_parent"/>
+        
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/cl_choose_bar"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center" />
+
+</RelativeLayout>
